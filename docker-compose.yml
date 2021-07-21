@@ -74,7 +74,6 @@ services:
         restart: unless-stopped
         volumes:
             - ./frontend/:/app/storefront
-            - /app/storefront/node_modules
         networks:
             craft-node:
                 ipv4_address: 128.0.0.50
