@@ -1,5 +1,8 @@
 FROM mmasson/craft-dev:7.4-alpine
 
+ARG UID
+ARG GID
+
 # Move to app directory
 WORKDIR /app/craft
 
@@ -10,16 +13,16 @@ RUN mkdir -p ./storage \
     && \
     mkdir -p ./web/cpresources \
     && \
-    chown -R www-data:www-data .
+    chown -R ${UID}:${GID} .
 
 # Expose php port
 EXPOSE 9000
 
+USER ${UID}
+
 # Run container
-CMD chown -R www-data:www-data . \
+CMD composer install --verbose --no-progress --no-scripts --optimize-autoloader --no-interaction \
     && \
-    su-exec www-data composer install --verbose --no-progress --no-scripts --optimize-autoloader --no-interaction \
-    && \
-    su-exec www-data composer craft-update \
+    composer craft-update \
     && \
     php-fpm

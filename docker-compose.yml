@@ -22,6 +22,9 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./backend
+            args:
+                UID: ${USER_UID}
+                GID: ${USER_GID}
         container_name: ${PROJECT_NAME}.craft
         restart: unless-stopped
         env_file:
@@ -37,6 +40,9 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./xdebug
+            args:
+                UID: ${USER_UID}
+                GID: ${USER_GID}
         container_name: ${PROJECT_NAME}.xdebug
         depends_on:
             - craft
@@ -61,6 +67,9 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./frontend
+            args:
+                UID: ${USER_UID}
+                GID: ${USER_GID}
         container_name: ${PROJECT_NAME}.storefront
         restart: unless-stopped
         volumes:
