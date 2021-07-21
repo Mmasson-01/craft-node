@@ -24,5 +24,25 @@ return [
     'modules' => [
         'my-module' => \modules\Module::class,
     ],
-    //'bootstrap' => ['my-module'],
+    'bootstrap' => ['my-module'],
+    'components' => [
+        'cache' => [
+            'class' => yii\redis\Cache::class,
+            'keyPrefix' => App::env('APP_ID') ?: 'CraftCMS',
+            'redis' => [
+                'hostname' => App::env('REDIS_HOSTNAME'),
+                'port' => App::env('REDIS_PORT'),
+                'database' => App::env('REDIS_CRAFT_DB'),
+            ],
+        ],
+        'deprecator' => [
+            'throwExceptions' => App::env('DEV_MODE'),
+        ],
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => App::env('REDIS_HOSTNAME'),
+            'port' => App::env('REDIS_PORT'),
+            'database' => App::env('REDIS_DEFAULT_DB'),
+        ],
+    ],
 ];
