@@ -1,4 +1,4 @@
-dateModified: 1626900441
+dateModified: 1626908714
 email:
   fromEmail: maximemasson2@hotmail.com
   fromName: 'Craft node app'
@@ -8,6 +8,15 @@ meta:
     9311f960-4e69-44b2-aa64-2fedfe0abad2: 'Craft node app' # Craft node app
     342015e1-54e2-41cb-8dda-08558be0fb30: Common # Common
     df674e07-1dac-4435-abe4-85d1ceab6d7b: 'Craft node app' # Craft node app
+plugins:
+  aws-s3:
+    edition: standard
+    enabled: true
+    schemaVersion: '1.2'
+  redactor:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.3.0
 system:
   edition: solo
   live: true
