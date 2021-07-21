@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+    nginx:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./nginx
+        container_name: ${PROJECT_NAME}.nginx
+        restart: unless-stopped
+        volumes:
+            - cpresources:/app/craft/web/cpresources:delegated
+            - ./backend/web:/app/craft/web:cached
+        env_file: &env
+            - ./backend/.env
+        ports:
+            - "8081:80"
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.10
+        init: true
+    craft:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./backend
+        container_name: ${PROJECT_NAME}.craft
+        restart: unless-stopped
+        env_file:
+            *env
+        volumes: &craft-volumes
+            - ./backend/:/app/craft
+            - cpresources:/app/craft/web/cpresources:delegated
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.20
+        init: true
+    php_xdebug:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./xdebug
+        container_name: ${PROJECT_NAME}.xdebug
+        depends_on:
+            - craft
+        env_file:
+            *env
+        volumes:
+            *craft-volumes
+        init: true
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.30
+    redis:
+        image: redis:5-alpine
+        container_name: ${PROJECT_NAME}.redis
+        expose:
+            - "6379"
+        init: true
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.40
+    storefront:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./frontend
+        container_name: ${PROJECT_NAME}.storefront
+        restart: unless-stopped
+        volumes:
+            - ./frontend/:/app/storefront
+            - /app/storefront/node_modules
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.50
+        init: true
+    mariadb:
+        container_name: ${PROJECT_NAME}.mariadb
+        image: mariadb:latest
+        restart: unless-stopped
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./backend/data/:/docker-entrypoint.initdb.d
+        environment:
+            MYSQL_DATABASE: ${PROJECT_NAME}
+            MYSQL_USER: craft
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - 8083:3306
+        networks:
+            craft-node:
+                ipv4_address: 128.0.0.60
+        init: true
+
+volumes:
+    db-data:
+    cpresources:
+
+networks:
+    craft-node:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 128.0.0.0/24

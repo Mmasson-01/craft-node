@@ -1,0 +1,40 @@
+{
+  "require": {
+    "craftcms/cms": "^3.6.4",
+    "vlucas/phpdotenv": "^3.4.0",
+    "yiisoft/yii2-redis": "^2.0.6"
+  },
+  "require-dev": {
+    "yiisoft/yii2-shell": "^2.0.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "modules\\": "modules/"
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "7.4"
+    }
+  },
+  "scripts": {
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "craft-update": [
+      "@post-craft-update"
+    ],
+    "post-craft-update": [
+      "@php craft install/check && php craft clear-caches/all || return 0",
+      "@php craft install/check && php craft migrate/all || return 0",
+      "@php craft install/check && php craft project-config/apply || return 0"
+    ],
+    "post-create-project-cmd": [
+      "@php craft setup/welcome"
+    ],
+    "post-update-cmd": "@post-craft-update",
+    "post-install-cmd": "@post-craft-update"
+  }
+}
