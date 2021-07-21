@@ -10,8 +10,8 @@ WORKDIR /app/storefront
 # Copy all files
 COPY . .
 
-# Install app
-RUN npm install
+# Install packages
+RUN npm install --legacy-peer-deps
 
 # Expose npm port
 EXPOSE 3001
